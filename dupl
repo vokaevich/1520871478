@@ -1,14 +1,22 @@
 #!/bin/sh
 #
 # Description:
-#
+#              get list all duplicate files in current directory and subdirectories
+# Output format:
+#              [inum] [size] [md5] [File name]
 # Options:
-# \( -type f -name "*.[Pp][Dd][Ff]" -o -name  "*.[Dd][Jj][Vv][Uu]" -o -name  "*.[Cc][Hh][Mm]" \) 
+#         no options expected
 # Copyleft ¿ 2017 Share and enjoy!
 
-for s in `find  . -not -empty  \( -type f -name "*.[Pp][Dd][Ff]" -o -name  "*.[Dd][Jj][Vv][Uu]" -o -name  "*.[Cc][Hh][Mm]" \) -print0 | xargs -0 ls -l | awk '{print $5}' | sort -n | uniq -d `;
-do INUMS=`find . -not -empty -size ${s}c \( -type f -name "*.[Pp][Dd][Ff]" -o -name  "*.[Dd][Jj][Vv][Uu]" -o -name  "*.[Cc][Hh][Mm]" \) -print0 | xargs -0 ls -i | awk '{print $1}'` ;
+if  [ $# != 0 ];
+then
+    echo "No arguments expected."
+    exit 1;
+fi
+
+for s in `find  . -not -empty -type f -print0 | xargs -0 ls -l | awk '{print $5}' | sort -n | uniq -d `;
+do INUMS=`find . -not -empty -size ${s}c -type f -print0 | xargs -0 ls -i | awk '{print $1}'` ;
     for i in ${INUMS}
         do echo ${i} | tr "\r\n" " " &&  echo ${s} | tr "\r\n" " " &&  find .  -type f  -size ${s}c  -inum ${i}  -print0 | xargs -0 md5 | awk '{print $NF}'| tr "\r\n" " "  &&  find . -type f -size ${s}c  -inum ${i} ; 
-	   done
     done
+done
