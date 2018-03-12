@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+#  Description: getting the size of all files in the current directory and underlying subdirectories 
+#
+#  Options: no options expected      
+#
+# Copyleft ¿ 2014 Share and enjoy!
+
+if  [ $# != 0 ];
+then
+    echo "No arguments expected."
+    exit 1;
+fi
+
+find . -type f -exec ls -l {} \; | awk '{total+=$5} END {print "Total size (bytes): "total}' | sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1.\2/;ta'
+
